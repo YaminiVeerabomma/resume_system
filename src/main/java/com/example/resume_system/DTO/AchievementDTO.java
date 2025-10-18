@@ -7,7 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthResponse {
-    private String token;
-    private String message;
+public class AchievementDTO {
+    private Long id;
+    private String title;
+    private String description;
 }

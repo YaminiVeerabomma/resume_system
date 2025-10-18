@@ -1,6 +1,6 @@
 package com.example.resume_system.repository;
 
-import com.example.resume_system.entity.Internship;
+import com.example.resume_system.entity.AcademicProject;
 import com.example.resume_system.entity.Resume;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface InternshipRepository extends JpaRepository<Internship, Long> {
+public interface AcademicProjectRepository extends JpaRepository<AcademicProject, Long> {
 
-    List<Internship> findByResume(Resume resume);
+    List<AcademicProject> findByResume(Resume resume);
 }

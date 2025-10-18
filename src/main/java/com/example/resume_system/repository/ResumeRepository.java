@@ -1,5 +1,8 @@
 package com.example.resume_system.repository;
 
+
+
+import com.example.resume_system.entity.Resume;
 import com.example.resume_system.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -7,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
-    Optional<User> findByEmail(String email);
+    Optional<Resume> findByUser(User user);
 
-    boolean existsByEmail(String email);
+    Optional<Resume> findByUserId(Long userId);
 }

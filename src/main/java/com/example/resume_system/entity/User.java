@@ -1,35 +1,40 @@
 package com.example.resume_system.entity;
 
 
+import com.example.resume_system.Enum.Gender;
+
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Project> projects;
+    private String contactNumber;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Skill> skills;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Course> courses;
+    private String githubURL;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Achievement> achievements;
+ 
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Resume resume;
 }

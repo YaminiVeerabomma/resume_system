@@ -1,20 +1,34 @@
 package com.example.resume_system.entity;
 
+
+import com.example.resume_system.Enum.InternshipPlatform;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Internship {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String company;
-    private String role;
-    private String duration; // e.g., "May–July 2025"
+    @Enumerated(EnumType.STRING)
+    private InternshipPlatform company;
+
+    private String duration;
+    private String projectName;
+    private String description;
+    private String certificateURL;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "resume_id")
+    @JsonBackReference
+    private Resume resume;
 }

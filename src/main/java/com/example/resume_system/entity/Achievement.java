@@ -1,11 +1,13 @@
 package com.example.resume_system.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -16,9 +18,10 @@ public class Achievement {
     private Long id;
 
     private String title;
-    private String description; // Optional
+    private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "resume_id")
+    @JsonBackReference
+    private Resume resume;
 }

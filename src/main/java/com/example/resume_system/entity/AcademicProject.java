@@ -1,7 +1,8 @@
 package com.example.resume_system.entity;
 
 
-import com.example.resume_system.Enum.CoursePlatform;
+
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
@@ -13,18 +14,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Course {
+public class AcademicProject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private CoursePlatform coursePlatform;  // <--- must match builder
-
-    private String courseSkills;
-    private String duration;
-    private String certificateURL;
+    private String projectName;
+    private String description;
+    private String githubURL;
 
     @ManyToOne
     @JoinColumn(name = "resume_id")
