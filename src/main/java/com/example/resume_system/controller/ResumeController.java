@@ -3,6 +3,8 @@ package com.example.resume_system.controller;
 import com.example.resume_system.DTO.*;
 import com.example.resume_system.entity.*;
 import com.example.resume_system.service.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/resume")
 @RequiredArgsConstructor
+@Tag(name = "Resume Management", description = "APIs for managing resumes, including skills, courses, projects, internships, and achievements")
 public class ResumeController {
 
     private final ResumeService resumeService;
@@ -20,12 +23,14 @@ public class ResumeController {
     private final SkillService skillService;
 
     // ------------------ Resume ------------------
+    @Operation(summary = "Get Resume", description = "Retrieve the resume for a specific user by their userId")
     @GetMapping("/{userId}")
     public ResponseEntity<ResumeDTO> getResume(@PathVariable Long userId) {
         ResumeDTO resumeDTO = resumeService.getResume(userId);
         return ResponseEntity.ok(resumeDTO);
     }
 
+    @Operation(summary = "Add or Update Education", description = "Add or update the education section of a user's resume")
     @PostMapping("/{userId}/education")
     public ResponseEntity<ResumeDTO> addEducation(
             @PathVariable Long userId,
@@ -34,8 +39,8 @@ public class ResumeController {
         return ResponseEntity.ok(resume);
     }
 
-    
     // ------------------ Academic Project ------------------
+    @Operation(summary = "Add Academic Project", description = "Add an academic project to the user's resume")
     @PostMapping("/{userId}/projects")
     public ResponseEntity<AcademicProject> addProject(
             @PathVariable Long userId,
@@ -45,6 +50,7 @@ public class ResumeController {
     }
 
     // ------------------ Achievement ------------------
+    @Operation(summary = "Add Achievement", description = "Add an achievement to the user's resume")
     @PostMapping("/{userId}/achievements")
     public ResponseEntity<Achievement> addAchievement(
             @PathVariable Long userId,
@@ -54,6 +60,7 @@ public class ResumeController {
     }
 
     // ------------------ Course ------------------
+    @Operation(summary = "Add Course", description = "Add a course or certification to the user's resume")
     @PostMapping("/{userId}/courses")
     public ResponseEntity<Course> addCourse(
             @PathVariable Long userId,
@@ -63,6 +70,7 @@ public class ResumeController {
     }
 
     // ------------------ Internship ------------------
+    @Operation(summary = "Add Internship", description = "Add an internship to the user's resume")
     @PostMapping("/{userId}/internships")
     public ResponseEntity<Internship> addInternship(
             @PathVariable Long userId,
@@ -72,6 +80,7 @@ public class ResumeController {
     }
 
     // ------------------ Skill ------------------
+    @Operation(summary = "Add Skill", description = "Add a skill to the user's resume")
     @PostMapping("/{userId}/skills")
     public ResponseEntity<Skill> addSkill(
             @PathVariable Long userId,
