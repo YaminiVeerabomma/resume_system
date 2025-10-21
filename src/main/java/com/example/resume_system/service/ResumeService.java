@@ -8,13 +8,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+
 @Service
 @RequiredArgsConstructor
 public class ResumeService {
-
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
- // ----------------- Get Resume -----------------
+
+    @Cacheable(value = "resumes", key = "#userId")
     public ResumeDTO getResume(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -22,6 +25,7 @@ public class ResumeService {
         Resume resume = resumeRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Resume not found"));
 
+        // map to DTO
         return ResumeDTO.builder()
                 .id(resume.getId())
                 .userId(user.getId())
@@ -31,16 +35,12 @@ public class ResumeService {
                 .interPercentage(resume.getInterPercentage())
                 .degreeCollegeName(resume.getDegreeCollegeName())
                 .degreePercentage(resume.getDegreePercentage())
-
-                // Skills
                 .skills(resume.getSkills().stream()
                         .map(skill -> SkillDTO.builder()
                                 .id(skill.getId())
                                 .skillName(skill.getSkillName())
                                 .build())
                         .collect(Collectors.toList()))
-
-                // Internships
                 .internships(resume.getInternships().stream()
                         .map(i -> InternshipDTO.builder()
                                 .id(i.getId())
@@ -51,8 +51,6 @@ public class ResumeService {
                                 .certificateURL(i.getCertificateURL())
                                 .build())
                         .collect(Collectors.toList()))
-
-                // Courses
                 .courses(resume.getCourses().stream()
                         .map(c -> CourseDTO.builder()
                                 .id(c.getId())
@@ -62,8 +60,6 @@ public class ResumeService {
                                 .certificateURL(c.getCertificateURL())
                                 .build())
                         .collect(Collectors.toList()))
-
-                // Projects
                 .projects(resume.getProjects().stream()
                         .map(p -> AcademicProjectDTO.builder()
                                 .id(p.getId())
@@ -72,8 +68,6 @@ public class ResumeService {
                                 .githubURL(p.getGithubURL())
                                 .build())
                         .collect(Collectors.toList()))
-
-                // Achievements
                 .achievements(resume.getAchievements().stream()
                         .map(a -> AchievementDTO.builder()
                                 .id(a.getId())
@@ -84,8 +78,7 @@ public class ResumeService {
                 .build();
     }
 
-
-    // ----------------- Add / Update Education -----------------
+    @CacheEvict(value = "resumes", key = "#userId")
     public ResumeDTO addOrUpdateEducation(Long userId, EducationDTO dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -102,7 +95,6 @@ public class ResumeService {
 
         resumeRepository.save(resume);
 
-        // ✅ Return updated resume as DTO
         return getResume(userId);
     }
 }
