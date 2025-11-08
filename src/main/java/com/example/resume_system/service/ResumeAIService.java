@@ -4,7 +4,6 @@ import com.example.resume_system.entity.Resume;
 import com.example.resume_system.repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.cache.annotation.Cacheable;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +14,6 @@ public class ResumeAIService {
     /**
      * Generate AI-style professional resume summary
      */
-    @Cacheable(value = "resumeSummary", key = "#userId")
     public String generateResumeSummary(Long userId) {
         Resume resume = resumeRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Resume not found"));
