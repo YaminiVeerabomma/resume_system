@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class UserRegisterConsumer {
 
     // ✅ This automatically listens to the queue
-    @RabbitListener(queues = RabbitMQConfig.REGISTER_QUEUE)
+    @RabbitListener(queues = RabbitMQConfig.REGISTER_QUEUE )
     public void handleUserRegistration(UserRegisterMessage message) {
 
         System.out.println("📩 [CONSUMER] New User Registration Event Received");
