@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface OtpTokenRepository extends JpaRepository<OtpToken, Long> {
 
     Optional<OtpToken> findTopByEmailAndUsedIsFalseOrderByExpiryAtDesc(String email);
+    Optional<OtpToken> findTopByPhoneAndUsedIsFalseOrderByExpiryAtDesc(String phone);
 	 @Modifying
 	    @Transactional
     void deleteByExpiryAtBefore(java.time.LocalDateTime time);

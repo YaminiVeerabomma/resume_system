@@ -24,51 +24,102 @@ public class OtpService {
 
     private final Random random = new Random();
 
-    // ✅ Important: Add @Transactional here
-    @Transactional
-    public void sendOtp(String email) {
 
-        // remove old expired entries
+    // ✅ Detect whether input is email or phone
+    private boolean isEmail(String input) {
+        return input.contains("@");
+    }
+
+
+    // ✅ SEND OTP (email or phone)
+    @Transactional
+    public void sendOtp(String emailOrPhone) {
+
         otpTokenRepository.deleteByExpiryAtBefore(LocalDateTime.now());
 
         String otp = generateOtp();
         LocalDateTime expiry = LocalDateTime.now().plusMinutes(otpExpiryMinutes);
 
-        OtpToken token = OtpToken.builder()
-                .email(email)
-                .otp(otp)
-                .expiryAt(expiry)
-                .used(false)
-                .build();
+        OtpToken token;
 
-        otpTokenRepository.save(token);
+        if (isEmail(emailOrPhone)) {
 
-        // send mail
+            token = OtpToken.builder()
+                    .email(emailOrPhone)
+                    .otp(otp)
+                    .expiryAt(expiry)
+                    .used(false)
+                    .build();
+
+            otpTokenRepository.save(token);
+
+            // ✅ SEND EMAIL
+            sendOtpEmail(emailOrPhone, otp);
+
+        } else {
+
+            token = OtpToken.builder()
+                    .phone(emailOrPhone)
+                    .otp(otp)
+                    .expiryAt(expiry)
+                    .used(false)
+                    .build();
+
+            otpTokenRepository.save(token);
+
+            // ✅ SEND SMS (just printing)
+            System.out.println("📱 OTP to " + emailOrPhone + " = " + otp);
+        }
+
+        System.out.println("✅ Generated OTP: " + otp);
+    }
+
+
+    // ✅ Email OTP sending
+    private void sendOtpEmail(String email, String otp) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Your OTP Code");
-        message.setText("Your OTP is: " + otp + "\nIt will expire in " + otpExpiryMinutes + " minutes.");
+        message.setText("Your OTP is: " + otp + "\nExpires in " + otpExpiryMinutes + " minutes.");
         mailSender.send(message);
-
-        System.out.println("OTP for " + email + " is: " + otp);
     }
 
-    public boolean verifyOtp(String email, String otp) {
-        return otpTokenRepository.findTopByEmailAndUsedIsFalseOrderByExpiryAtDesc(email)
-                .map(token -> {
-                    if (token.getExpiryAt().isBefore(LocalDateTime.now())) {
-                        return false;
-                    }
-                    if (!token.getOtp().equals(otp)) {
-                        return false;
-                    }
-                    token.setUsed(true);
-                    otpTokenRepository.save(token);
-                    return true;
-                })
-                .orElse(false);
+
+    // ✅ VERIFY OTP (email or phone)
+    public boolean verifyOtp(String emailOrPhone, String otp) {
+
+        if (isEmail(emailOrPhone)) {
+            return otpTokenRepository
+                    .findTopByEmailAndUsedIsFalseOrderByExpiryAtDesc(emailOrPhone)
+                    .map(token -> validateOtp(token, otp))
+                    .orElse(false);
+        } else {
+            return otpTokenRepository
+                    .findTopByPhoneAndUsedIsFalseOrderByExpiryAtDesc(emailOrPhone)
+                    .map(token -> validateOtp(token, otp))
+                    .orElse(false);
+        }
     }
 
+
+    // ✅ Validate OTP logic
+    private boolean validateOtp(OtpToken token, String otp) {
+
+        if (token.getExpiryAt().isBefore(LocalDateTime.now())) {
+            return false; // expired
+        }
+
+        if (!token.getOtp().equals(otp)) {
+            return false; // incorrect
+        }
+
+        token.setUsed(true);
+        otpTokenRepository.save(token);
+        return true;
+    }
+
+
+    // ✅ 6-digit OTP generator
     private String generateOtp() {
         int number = 100000 + random.nextInt(900000);
         return String.valueOf(number);
